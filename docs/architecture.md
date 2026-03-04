@@ -55,30 +55,35 @@ graph TD
         CW
     end
 ```
+# System Architecture
+
+This document provides a detailed breakdown of the **Serverless Image Inference Pipeline** architecture on AWS. The system is designed to classify images (Cats vs. Dogs) using a fully serverless, event-driven approach.
+
+---
+
 ## 2. Event Flow
 
-The system supports two distinct execution paths for inference, catering to both automated workflows and real-time application needs.
+The system supports two primary execution paths for triggering inference logic.
 
-### 2.1 Event-Driven Pipeline (Async)
-* **Trigger:** User uploads an image to `s3://<bucket>/uploads/`.
-* **Action:** S3 triggers the Lambda function via an **S3 Event Notification** (`s3:ObjectCreated:*`).
-* **Logic:** Lambda invokes Rekognition for classification, processes the image via Pillow, saves the output to `/processed/`, and logs metadata to DynamoDB.
-* **Benefit:** Fully automated, scalable background processing that doesn't require active client waiting.
+### 1.1 Event-Driven Pipeline (Primary)
+This path enables fully automated processing as soon as data enters the system.
+1. **User Upload:** User uploads an image to the S3 bucket under the `uploads/` prefix.
+2. **S3 Event:** S3 triggers an event notification to AWS Lambda.
+3. **Classification:** Lambda invokes Amazon Rekognition (`DetectLabels`).
+4. **Processing:** Lambda uses the Pillow library to resize/compress the image.
+5. **Storage:** The processed image is saved to S3 (`processed/`).
+6. **Persistence:** Metadata and inference results are saved to DynamoDB.
 
-### 2.2 On-Demand API Inference (Sync)
-* **Trigger:** Client sends a `POST` request to **API Gateway**.
-* **Action:** API Gateway forwards the request payload to the Lambda function.
-* **Logic:** Identical processing logic as the event-driven path, but execution occurs in real-time.
-* **Response:** Returns a synchronous JSON object containing classification results, confidence scores, and processing latency metrics.
-* **Benefit:** Enables direct integration with web or mobile front-ends for immediate feedback.
+### 1.2 On-Demand API Inference
+Allows external applications to trigger inference on existing S3 objects via REST.
+1. **Client Request:** User sends a `POST /predict` request to API Gateway.
+2. **Lambda Trigger:** API Gateway invokes the Lambda function.
+3. **Execution:** The same Rekognition and processing logic is applied.
+4. **Response:** The system returns a JSON response with the classification result.
 
-## 3. AWS Services Used
-
-| Service | Purpose | Key Features & Implementation |
-| :--- | :--- | :--- |
-| **Amazon S3** | Object Storage | Acts as the data lake for raw `uploads/` and optimized `processed/` images. Uses **Event Notifications** to trigger the async pipeline. |
-| **AWS Lambda** | Serverless Compute | The core execution engine. Orchestrates inference, image transformation, and database writes without managing servers. |
-| **Amazon Rekognition** | Computer Vision | Provides deep-learning based image analysis via the `DetectLabels` API to identify "Cat" vs "Dog" labels. |
-| **Amazon DynamoDB** | NoSQL Database | Stores high-speed inference metadata, including confidence scores and processing telemetry (latency, timestamps). |
-| **API Gateway** | API Management | Exposes the RESTful `POST /predict` endpoint, handling request routing and security throttling. |
-| **CloudWatch** | Observability | Captures execution logs and runtime metrics, providing a centralized audit trail for the entire pipeline. |
+**Example API Request:**
+```json
+{
+  "bucket": "ds-serverless-image-pipeline-cc",
+  "key": "uploads/Cat2.jpg"
+}
