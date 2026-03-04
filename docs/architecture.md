@@ -71,3 +71,14 @@ The system supports two distinct execution paths for inference, catering to both
 * **Logic:** Identical processing logic as the event-driven path, but execution occurs in real-time.
 * **Response:** Returns a synchronous JSON object containing classification results, confidence scores, and processing latency metrics.
 * **Benefit:** Enables direct integration with web or mobile front-ends for immediate feedback.
+
+## 3. AWS Services Used
+
+| Service | Purpose | Key Features & Implementation |
+| :--- | :--- | :--- |
+| **Amazon S3** | Object Storage | Acts as the data lake for raw `uploads/` and optimized `processed/` images. Uses **Event Notifications** to trigger the async pipeline. |
+| **AWS Lambda** | Serverless Compute | The core execution engine. Orchestrates inference, image transformation, and database writes without managing servers. |
+| **Amazon Rekognition** | Computer Vision | Provides deep-learning based image analysis via the `DetectLabels` API to identify "Cat" vs "Dog" labels. |
+| **Amazon DynamoDB** | NoSQL Database | Stores high-speed inference metadata, including confidence scores and processing telemetry (latency, timestamps). |
+| **API Gateway** | API Management | Exposes the RESTful `POST /predict` endpoint, handling request routing and security throttling. |
+| **CloudWatch** | Observability | Captures execution logs and runtime metrics, providing a centralized audit trail for the entire pipeline. |
