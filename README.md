@@ -24,8 +24,8 @@ graph TD
     Lambda{AWS Lambda<br/>Inference Engine}
     Rek[Amazon Rekognition]
     DB[(Amazon DynamoDB)]
-    S3_Up[(S3: Uploads)]
-    S3_Proc[(S3: Processed)]
+    S3_Up[(S3: uploads/)]
+    S3_Proc[(S3: processed/)]
     CW[CloudWatch Logs]
 
     %% Styles
