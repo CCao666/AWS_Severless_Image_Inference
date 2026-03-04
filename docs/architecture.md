@@ -4,7 +4,6 @@ This document describes the technical architecture of the **Serverless Image Inf
 
 The system processes images uploaded to Amazon S3, performs classification using Amazon Rekognition, resizes images using Pillow, and persists metadata in DynamoDB.
 
----
 
 ## 1. High-Level Architecture
 
@@ -56,3 +55,19 @@ graph TD
         CW
     end
 ```
+## 2. Event Flow
+
+The system supports two distinct execution paths for inference, catering to both automated workflows and real-time application needs.
+
+### 2.1 Event-Driven Pipeline (Async)
+* **Trigger:** User uploads an image to `s3://<bucket>/uploads/`.
+* **Action:** S3 triggers the Lambda function via an **S3 Event Notification** (`s3:ObjectCreated:*`).
+* **Logic:** Lambda invokes Rekognition for classification, processes the image via Pillow, saves the output to `/processed/`, and logs metadata to DynamoDB.
+* **Benefit:** Fully automated, scalable background processing that doesn't require active client waiting.
+
+### 2.2 On-Demand API Inference (Sync)
+* **Trigger:** Client sends a `POST` request to **API Gateway**.
+* **Action:** API Gateway forwards the request payload to the Lambda function.
+* **Logic:** Identical processing logic as the event-driven path, but execution occurs in real-time.
+* **Response:** Returns a synchronous JSON object containing classification results, confidence scores, and processing latency metrics.
+* **Benefit:** Enables direct integration with web or mobile front-ends for immediate feedback.
