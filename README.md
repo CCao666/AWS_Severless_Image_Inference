@@ -89,3 +89,17 @@ graph TD
         CW
     end
 ```
+
+---
+## 4. Tech Stack
+
+| Category | Service / Tool | Description |
+| :--- | :--- | :--- |
+| **Compute** | **AWS Lambda** | Python-based serverless execution for inference logic and image processing. |
+| **API Management** | **Amazon API Gateway** | RESTful endpoint provider with API Key authentication and request throttling. |
+| **AI / ML** | **Amazon Rekognition** | Managed deep learning service used for high-accuracy Cat vs. Dog label detection. |
+| **Storage (Object)** | **Amazon S3** | Dual-bucket strategy: `/uploads` for raw ingestion and `/processed` for optimized output. |
+| **Database (NoSQL)** | **Amazon DynamoDB** | Single-table design for persisting inference metadata and processing telemetry. |
+| **Image Processing** | **Pillow (PIL)** | Deployed via **Lambda Layers** for on-the-fly resizing and JPEG optimization. |
+| **Monitoring** | **Amazon CloudWatch** | Real-time logging, custom metrics for latency, and error tracking. |
+| **Security** | **AWS IAM** | Granular execution roles following the Principle of Least Privilege (PoLP). |
