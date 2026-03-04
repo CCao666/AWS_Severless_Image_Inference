@@ -14,7 +14,9 @@ A production-style **serverless computer vision pipeline** on AWS that classifie
 - **API protection** via `x-api-key` shared-secret authentication (prevents unauthorized calls)
 
 ---
+## Architecture
 
+```mermaid
 graph TD
     %% Nodes
     Client([Client / User])
@@ -59,3 +61,4 @@ graph TD
         DB
         CW
     end
+```
