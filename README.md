@@ -159,11 +159,14 @@ The service returns a structured JSON object containing the classification resul
 To wrap up your README, here is a standard layout. Adjust the file names if yours are slightly different:
 
 ```text
-.
-├── src/
-│   ├── lambda_function.py      # Main Lambda logic (Rekognition, S3 & DynamoDB)
-│   └── image_processor.py      # Image utility for resizing & compression
-├── layers/
-│   └── pillow.zip              # Pre-compiled Pillow library for AWS Lambda
-└── README.md                   # Project documentation
+aws-serverless-image-inference/
+├── lambda/
+│   └── lambda_function.py      # Core logic (Rekognition, S3 & DynamoDB)
+├── layer/
+│   └── build_pillow_layer.sh   # Automation script for Docker-based builds
+├── docs/
+│   └── architecture.md         # Detailed system design & event flow
+├── README.md                   # Main project documentation
+├── requirements.txt            # Local development dependencies
+└── .gitignore                  # Git exclusion rules
 ```
