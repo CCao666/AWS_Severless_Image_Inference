@@ -161,14 +161,9 @@ To wrap up your README, here is a standard layout. Adjust the file names if your
 ```text
 .
 ├── src/
-│   ├── handlers/
-│   │   └── inference_handler.py    # Main Lambda logic for Rekognition & S3
-│   └── utils/
-│       └── image_processor.py      # Pillow-based resizing & compression
+│   ├── lambda_function.py      # Main Lambda logic (Rekognition, S3 & DynamoDB)
+│   └── image_processor.py      # Image utility for resizing & compression
 ├── layers/
-│   └── pillow/                     # Lambda Layer for PIL/Pillow dependencies
-├── tests/                          # Unit and integration tests
-├── events/                         # Sample S3/API Gateway event JSONs
-├── template.yaml                   # AWS SAM / CloudFormation template
-└── README.md
+│   └── pillow.zip              # Pre-compiled Pillow library for AWS Lambda
+└── README.md                   # Project documentation
 ```
