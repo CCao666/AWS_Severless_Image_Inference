@@ -131,3 +131,21 @@ Allows external applications to trigger inference on existing S3 objects via RES
 * **Purpose:** Provides comprehensive observability for the entire stack.
 
 * **Monitoring:**  Captures real-time Lambda execution logs (stdout/stderr), tracks system errors, and monitors performance metrics such as end-to-end inference latency.
+
+---
+---
+
+## 4. Image Processing Layer (Lambda Layers)
+
+The Lambda function utilizes a **Custom Lambda Layer** specifically configured to house the **Pillow (PIL)** library and its dependencies.
+
+### Why use Lambda Layers?
+* **Dependency Decoupling:** Keeps the core function deployment package small (under 1MB), enabling faster uploads and allowing for code editing directly in the AWS Console if necessary.
+* **Binary Compatibility:** Pillow relies on C-extensions that must be compiled for the specific Amazon Linux execution environment. Using a layer ensures these binaries are consistent across all environments.
+* **Reusability:** The same imaging layer can be attached to other functions in the future without duplicating library code.
+
+### Build Process
+To ensure the library runs correctly on the Lambda runtime (Amazon Linux 2 or AL2023), the layer is built using a **Docker-based workflow**:
+1. A container matching the Lambda runtime is pulled.
+2. `pip install pillow` is executed inside the container to target the correct OS architecture.
+3. The resulting site-packages are zipped into a `python/` directory structure and uploaded as a Layer version.
