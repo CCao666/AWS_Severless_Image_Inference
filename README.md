@@ -125,8 +125,30 @@ Run inference on an image already stored in an S3 bucket.
 ```bash
 curl -X POST "[https://r5ah2t7lfg.execute-api.us-east-1.amazonaws.com/predict](https://r5ah2t7lfg.execute-api.us-east-1.amazonaws.com/predict)" \
   -H "Content-Type: application/json" \
-  -H "x-api-key: YOUR_API_KEY" \
+  -H "x-api-key: MY_API_KEY" \
   -d '{
     "bucket": "ds-serverless-image-pipeline-cc",
     "key": "uploads/Dog1.jpg"
   }'
+```
+
+### Expected Response (`200 OK`)
+
+The service returns a structured JSON object containing the classification results from Rekognition and performance metrics from the Lambda execution.
+
+```json
+{
+  "status": "success",
+  "request_id": "a1b2c3d4-e5f6-7890-abcd-1234567890ab",
+  "inference": {
+    "label": "Dog",
+    "confidence": 99.42,
+    "source_object": "uploads/Dog1.jpg"
+  },
+  "processing": {
+    "optimized_s3_url": "s3://ds-serverless-image-pipeline-cc/processed/Dog1.jpg",
+    "latency_ms": 425,
+    "timestamp": "2026-03-03T22:40:00Z"
+  }
+}
+```
