@@ -122,3 +122,12 @@ Allows external applications to trigger inference on existing S3 objects via RES
   "latency_ms": 5166
 }
 ```
+### **Amazon API Gateway**
+* **Purpose:** Provides a managed RESTful entry point for synchronous, on-demand inference requests.
+
+* **Security:** Enforces identity-based access via x-api-key authentication to prevent unauthorized API consumption and potential cost exhaustion.
+
+### **Amazon CloudWatch**
+* **Purpose:** Provides comprehensive observability for the entire stack.
+
+* **Monitoring:**  Captures real-time Lambda execution logs (stdout/stderr), tracks system errors, and monitors performance metrics such as end-to-end inference latency.
