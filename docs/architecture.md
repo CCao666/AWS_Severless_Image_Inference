@@ -148,3 +148,22 @@ To ensure the library runs correctly on the Lambda runtime (Amazon Linux 2 or AL
 1. A container matching the Lambda runtime is pulled.
 2. `pip install pillow` is executed inside the container to target the correct OS architecture.
 3. The resulting site-packages are zipped into a `python/` directory structure and uploaded as a Layer version.
+
+
+---
+## 5. Security & Operational Excellence
+
+### Security Considerations
+The architecture implements several layers of defense to ensure data integrity and cost control:
+
+* **API Key Authentication:** The Synchronous (REST) path is protected by **AWS API Gateway Usage Plans**. All incoming requests must provide a valid `x-api-key` in the header. Requests that are missing a key or provide an invalid one are rejected with a `401 Unauthorized` response.
+* **Input Validation:** To prevent runtime errors and injection attempts, the Lambda function performs strict schema validation. It ensures the `bucket` and `key` parameters exist and conform to expected S3 naming conventions before initiating any downstream service calls.
+* **Cost Protection:** * **Prefix Restriction:** The Lambda function is scoped via IAM to only interact with specific S3 prefixes (`uploads/` and `processed/`).
+    * **Size Limits:** Image processing logic includes checks for maximum file sizes to prevent memory exhaustion and excessive Rekognition costs.
+
+### Scalability & Observability
+As a fully serverless stack, the system is designed for high availability and elastic demand.
+
+* **Automatic Scaling:** Every component—**API Gateway, Lambda, S3, and DynamoDB**—is inherently elastic. The system can scale from zero to thousands of concurrent image uploads without manual infrastructure provisioning.
+* **Real-time Monitoring:** * **Performance Tracking:** Custom logs in **CloudWatch** track end-to-end latency, allowing for the identification of bottlenecks in Rekognition or image processing.
+    * **Health Visibility:** Classification results (Cat/Dog/Other) and error rates are logged as structured data, enabling the creation of CloudWatch Dashboards for operational oversight.
