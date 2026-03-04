@@ -55,9 +55,6 @@ graph TD
         CW
     end
 ```
-# System Architecture
-
-This document provides a detailed breakdown of the **Serverless Image Inference Pipeline** architecture on AWS. The system is designed to classify images (Cats vs. Dogs) using a fully serverless, event-driven approach.
 
 ---
 
