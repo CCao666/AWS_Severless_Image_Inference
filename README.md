@@ -14,6 +14,33 @@ A production-style **serverless computer vision pipeline** on AWS that classifie
 - **API protection** via `x-api-key` shared-secret authentication (prevents unauthorized calls)
 
 ---
+## System Overview
+
+This project implements a robust, event-driven image processing pipeline. It is designed to handle binary image data across two distinct execution paths, ensuring both flexibility for real-time requests and scalability for bulk uploads.
+
+### Execution Flow
+
+The system operates through two primary entry points:
+
+1.  **Synchronous Path (REST API):**
+    * A client sends a `POST` request to **Amazon API Gateway** with a reference to an existing S3 object.
+    * API Gateway triggers the **Lambda Inference Engine**, which performs immediate classification and returns the result (label and confidence) in the HTTP response.
+    * *Ideal for:* Real-time UI feedback and interactive applications.
+
+2.  **Asynchronous Path (Event-Driven):**
+    * A client uploads a raw image directly to the `/uploads` prefix of the **S3 Bucket**.
+    * An **S3 Event Notification** automatically triggers the Lambda function.
+    * The function processes the image in the background without requiring the client to wait.
+    * *Ideal for:* Batch processing and high-throughput data ingestion.
+
+### Core Logic & Transformation
+
+Regardless of the trigger, the **Lambda Inference Engine** performs the following atomic operations:
+* **Intelligence:** Calls **Amazon Rekognition** to identify "Cat" vs "Dog" labels.
+* **Optimization:** Uses **Pillow** to resize and compress the image, saving storage costs and improving downstream loading speeds.
+* **Persistence:** Writes a standardized record to **Amazon DynamoDB**, including a unique `request_id`, classification results, and processing latency for auditing.
+
+---
 ## Architecture
 
 ```mermaid
