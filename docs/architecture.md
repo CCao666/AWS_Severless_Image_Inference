@@ -12,13 +12,47 @@ The following diagram illustrates the serverless flow and service integration:
 
 ```mermaid
 graph TD
-    Client([Client / API]) -->|POST /predict| AGW[[API Gateway]]
-    S3_Up[(S3: Uploads)] -->|S3 Event| Lambda{AWS Lambda}
-    AGW --> Lambda
+    %% Nodes
+    Client([Client / User])
+    AGW[[API Gateway]]
+    Lambda{AWS Lambda<br/>Inference Engine}
+    Rek[Amazon Rekognition]
+    DB[(Amazon DynamoDB)]
+    S3_Up[(S3: uploads/)]
+    S3_Proc[(S3: processed/)]
+    CW[CloudWatch Logs]
+
+    %% Styles
+    classDef aws fill:#f90,stroke:#232F3E,stroke-width:2px,color:#fff;
+    classDef storage fill:#3F8624,stroke:#232F3E,stroke-width:2px,color:#fff;
+    classDef logic fill:#D05C17,stroke:#232F3E,stroke-width:2px,color:#fff;
     
-    subgraph "Inference & Processing"
-        Lambda <--> Rek[Amazon Rekognition]
-        Lambda --> S3_Proc[(S3: Processed)]
-        Lambda --> DB[(Amazon DynamoDB)]
-        Lambda -.-> CW[CloudWatch Logs]
+    class AGW,Lambda logic;
+    class S3_Up,S3_Proc,DB storage;
+    class Rek aws;
+
+    %% Async Path
+    Client -->|1. Upload Image| S3_Up
+    S3_Up -->|2. S3 Event Trigger| Lambda
+
+    %% Sync Path
+    Client -->|1. POST /predict| AGW
+    AGW -->|2. Invoke| Lambda
+
+    %% Internal Logic
+    Lambda <-->|3. DetectLabels| Rek
+    Lambda -->|4. Resize & Compress| S3_Proc
+    Lambda -->|5. Persist Metadata| DB
+    Lambda -.->|Logs & Metrics| CW
+
+    %% Layout Arrangement
+    subgraph "AWS Cloud (Serverless Stack)"
+        AGW
+        Lambda
+        Rek
+        S3_Up
+        S3_Proc
+        DB
+        CW
     end
+```
