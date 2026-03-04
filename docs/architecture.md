@@ -133,7 +133,6 @@ Allows external applications to trigger inference on existing S3 objects via RES
 * **Monitoring:**  Captures real-time Lambda execution logs (stdout/stderr), tracks system errors, and monitors performance metrics such as end-to-end inference latency.
 
 ---
----
 
 ## 4. Image Processing Layer (Lambda Layers)
 
