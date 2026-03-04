@@ -84,3 +84,41 @@ Allows external applications to trigger inference on existing S3 objects via RES
   "bucket": "ds-serverless-image-pipeline-cc",
   "key": "uploads/Cat2.jpg"
 }
+
+---
+
+## 3. AWS Services Used
+
+### **Amazon S3**
+* **Purpose:** Acts as the primary entry and exit point for all image data.
+* **Prefix Structure:**
+    * `uploads/`: Landing zone for raw, high-resolution images.
+    * `processed/`: Storage for optimized, resized, and compressed images.
+* **Features:** Utilizes **S3 Event Notifications** to trigger the Lambda workflow automatically upon a successful object upload.
+
+### **AWS Lambda**
+* **Purpose:** The central serverless compute layer orchestrating the entire inference pipeline.
+* **Responsibilities:** * Parsing S3 event metadata and API Gateway request bodies.
+    * Orchestrating calls to Amazon Rekognition.
+    * Executing image transformation logic (resizing/compression).
+    * Managing state persistence by writing to DynamoDB.
+* **Advantages:** Zero infrastructure management, automatic horizontal scaling, and a cost-effective pay-per-request billing model.
+
+### **Amazon Rekognition**
+* **Purpose:** Provides a managed deep-learning interface for computer vision.
+* **Implementation:** Leverages the `DetectLabels` API.
+* **Logic:** The system filters results to map detected labels into simplified categories: `cat`, `dog`, or `other`, while recording confidence scores for auditability.
+
+### **Amazon DynamoDB**
+* **Purpose:** A high-performance NoSQL database used to store inference metadata and processing telemetry.
+* **Data Schema Example:**
+```json
+{
+  "pk": "s3://bucket/uploads/Cat2.jpg",
+  "sk": "2026-03-03T22:14:47Z",
+  "pred_class": "cat",
+  "confidence": 99.86,
+  "processed_key": "processed/Cat2_512.jpg",
+  "latency_ms": 5166
+}
+```
