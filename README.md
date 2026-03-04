@@ -91,7 +91,7 @@ graph TD
 ```
 
 ---
-## 4. Tech Stack
+## Tech Stack
 
 | Category | Service / Tool | Description |
 | :--- | :--- | :--- |
@@ -103,3 +103,30 @@ graph TD
 | **Image Processing** | **Pillow (PIL)** | Deployed via **Lambda Layers** for on-the-fly resizing and JPEG optimization. |
 | **Monitoring** | **Amazon CloudWatch** | Real-time logging, custom metrics for latency, and error tracking. |
 | **Security** | **AWS IAM** | Granular execution roles following the Principle of Least Privilege (PoLP). |
+
+---
+## API Usage
+
+The system exposes a synchronous REST endpoint for real-time inference. Access is protected via an **API Key** shared-secret mechanism.
+
+### Authentication
+All requests must include the `x-api-key` header.
+- **Header Name:** `x-api-key`
+- **Value:** `Your-Provisioned-API-Key`
+
+### Synchronous Prediction
+Run inference on an image already stored in an S3 bucket.
+
+**Endpoint:** `POST /predict`
+
+### Request Example
+
+#### Standard (Bash / Zsh)
+```bash
+curl -X POST "[https://r5ah2t7lfg.execute-api.us-east-1.amazonaws.com/predict](https://r5ah2t7lfg.execute-api.us-east-1.amazonaws.com/predict)" \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: YOUR_API_KEY" \
+  -d '{
+    "bucket": "ds-serverless-image-pipeline-cc",
+    "key": "uploads/Dog1.jpg"
+  }'
