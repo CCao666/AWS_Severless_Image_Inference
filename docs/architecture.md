@@ -84,7 +84,7 @@ Allows external applications to trigger inference on existing S3 objects via RES
   "bucket": "ds-serverless-image-pipeline-cc",
   "key": "uploads/Cat2.jpg"
 }
-
+```
 ---
 
 ## 3. AWS Services Used
