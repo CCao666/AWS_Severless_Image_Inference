@@ -152,3 +152,23 @@ The service returns a structured JSON object containing the classification resul
   }
 }
 ```
+
+---
+
+## Project Structure 
+To wrap up your README, here is a standard layout. Adjust the file names if yours are slightly different:
+
+```text
+.
+├── src/
+│   ├── handlers/
+│   │   └── inference_handler.py    # Main Lambda logic for Rekognition & S3
+│   └── utils/
+│       └── image_processor.py      # Pillow-based resizing & compression
+├── layers/
+│   └── pillow/                     # Lambda Layer for PIL/Pillow dependencies
+├── tests/                          # Unit and integration tests
+├── events/                         # Sample S3/API Gateway event JSONs
+├── template.yaml                   # AWS SAM / CloudFormation template
+└── README.md
+```
